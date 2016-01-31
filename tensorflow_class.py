@@ -206,10 +206,10 @@ class inference_hidden1(BaseTensorFlow):
             logits = tf.matmul(hidden1, weights) + biases
             reg_linear = tf.nn.l2_loss(weights) 
         
-            if isEval:  
-                return logits
-            else:
-                regularizers = (reg_hidden1 + reg_linear)
+        if isEval:  
+            return logits
+        else:
+            regularizers = (reg_hidden1 + reg_linear)
                 return (logits, regularizers)
 
 ############main method#########################
