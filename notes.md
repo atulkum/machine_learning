@@ -3,10 +3,10 @@
 1) related to coupling
 In probability theory, coupling is a proof technique that allows one 
 to compare two unrelated random variables(distributions) 
-{\displaystyle X} X and {\displaystyle Y} Y by creating a random vector 
-{\displaystyle W} W whose marginal distributions correspond to {\displaystyle X} X and 
-{\displaystyle Y} Y respectively. The choice of {\displaystyle W} W is generally not unique, and 
-the whole idea of "coupling" is about making such a choice so that {\displaystyle X} X and {\displaystyle Y} 
+ X and  Y by creating a random vector 
+ W whose marginal distributions correspond to  X and 
+ Y respectively. The choice of  W is generally not unique, and 
+the whole idea of "coupling" is about making such a choice so that  X and 
 Y can be related in a certain way we desire.
 
 2) For gaussian random variable its simple (we can easily related x and y using a linear equation)
