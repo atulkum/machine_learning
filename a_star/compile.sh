@@ -1,0 +1,1 @@
+/usr/j2se/bin/javac *.java
