@@ -28,7 +28,8 @@ def get_glove(glove_path, embd_dim):
     return word2id, embd
 
 if __name__ == '__main__':
-    word2id, embd = get_glove('/Users/atkumar/dl_entity/glove.6B/glove.6B.50d.txt', 50)
+    home = os.path.expanduser('~')
+    word2id, embd = get_glove(os.path.join(home,'dl_entity/glove.6B/glove.6B.50d.txt'), 50)
     id2word = {v: k for k, v in word2id.items()}
     print('glove enbedding loaded')
 
