@@ -58,16 +58,16 @@ def set_seed(seed):
         torch.cuda.manual_seed_all(seed)
 
 
-class BertNLI(nn.Module):
+class BertClassifier(nn.Module):
     def __init__(self):
-        super(BertNLI, self).__init__()
+        super(BertClassifier, self).__init__()
 
         self.bert = BertModel.from_pretrained("bert-base-uncased")
         self.dropout = nn.Dropout(bert_config.hidden_dropout_prob)
 
         proj_dim = 64
         self.embd_proj = nn.Linear(bert_config.hidden_size, proj_dim)
-        self.classifier = nn.Linear(proj_dim, 3)
+        self.classifier = nn.Linear(proj_dim, 2)
 
         self.embd_proj.weight.data.normal_(mean=0.0, std=bert_config.initializer_range)
         self.embd_proj.bias.data.zero_()
