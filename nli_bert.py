@@ -81,7 +81,7 @@ class BertNLI(nn.Module):
         self.classifier.bias.data.zero_()
         self.bilinear_proj.weight.data.normal_(mean=0.0, std=bert_config.initializer_range)
 
-    def forward(self, input_ids1, input_ids2, labels = False):
+    def forward(self, input_ids1, input_ids2, labels = None):
         attention_mask = input_ids1.ne(bert_tokenizer.pad_token_id)
         outputs = self.bert(
             input_ids=input_ids1,
