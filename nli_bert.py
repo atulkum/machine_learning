@@ -37,11 +37,13 @@ def load_examples(filename, is_train=True):
     all_labels = []
     for i, line in enumerate(open(filename)):
         p = line.split("\t")
-        all_input_ids1.append(torch.tensor(bert_tokenizer.encode(p[1])).long())
-        all_input_ids2.append(torch.tensor(bert_tokenizer.encode(p[2])).long())
-
         if is_train:
             all_labels.append(label_map[p[0]])
+            all_input_ids1.append(torch.tensor(bert_tokenizer.encode(p[1])).long())
+            all_input_ids2.append(torch.tensor(bert_tokenizer.encode(p[2])).long())
+        else:
+            all_input_ids1.append(torch.tensor(bert_tokenizer.encode(p[0])).long())
+            all_input_ids2.append(torch.tensor(bert_tokenizer.encode(p[1])).long())
 
     all_input_ids1 = pad_sequence(all_input_ids1, batch_first=True, padding_value=bert_tokenizer.pad_token_id)
     all_input_ids2 = pad_sequence(all_input_ids2, batch_first=True, padding_value=bert_tokenizer.pad_token_id)
@@ -143,7 +145,9 @@ def prediction(model, test_dataset, filename):
             f.write(label_list[yi])
             f.write('\n')
 
-def train(dataset, output_root_dir, test_filename):
+
+
+def train(dataset, output_root_dir):
     weight_decay = 0.0
     warmup_steps = 0.0
     learning_rate = 5e-5
@@ -219,23 +223,35 @@ def train(dataset, output_root_dir, test_filename):
         print(f"{global_step}: acc: {acc}")
 
     save_directory = os.path.join(output_root_dir, 'checkpoint')
-
     if not os.path.exists(save_directory):
         os.makedirs(save_directory)
-
     print(f"Saving model checkpoint to {save_directory}", flush=True)
     output_model_file = os.path.join(save_directory, "pytorch_model.bin")
     torch.save(model.state_dict(), output_model_file)
 
+def dump_test(test_filename, model_dir):
+    model = BertNLI()
+    save_directory = os.path.join(model_dir, 'checkpoint')
+    model_file_path = os.path.join(save_directory, "pytorch_model.bin")
+    print(f'reading model from {model_file_path}')
+    state_dict = torch.load(model_file_path, map_location=lambda storage, location: storage)
+    model.eval()
+    model.load_state_dict(state_dict, strict=False)
+    if is_cuda:
+        model = model.cuda()
+
     #dump test
-    all_test = load_examples(test_filename)
+    batch_size = 32
+    all_test = load_examples(test_filename, False)
     test_sampler = SequentialSampler(all_test)
-    test_dataloader = DataLoader(all_test, sampler=test_sampler, batch_size=train_batch_size)
-    prediction(model, test_dataloader, os.path.join(output_root_dir, 'submission.txt'))
+    test_dataloader = DataLoader(all_test, sampler=test_sampler, batch_size=batch_size)
+    prediction(model, test_dataloader, os.path.join(model_dir, 'submission.txt'))
 
 if __name__ == "__main__":
-    root_dir = os.path.join(os.path.expanduser("~"), 'Downloads/entailment1')
+    root_dir = os.path.join(os.path.expanduser("~"), 'entailment1')
     test_filename = os.path.join(root_dir, 'test_data.txt')
+    dump_test(test_filename, os.path.join(root_dir, "dl_model_1592011278"))
+    '''
     train_filename = os.path.join(root_dir, 'train_data.txt')
     output_root_dir = os.path.join(root_dir, f'dl_model_{int(time.time())}')
 
@@ -244,4 +260,5 @@ if __name__ == "__main__":
 
     all_train = load_examples(train_filename)
 
-    train(all_train, output_root_dir, test_filename)
+    train(all_train, output_root_dir)
+    '''
